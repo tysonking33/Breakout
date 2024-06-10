@@ -55,6 +55,9 @@ else()
     message(FATAL_ERROR "OpenGL was not found on the system")
 endif()
 
+set(ZLIB_ROOT "/usr/lib/x86_64-linux-gnu/libz.so.1.2.11")
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/LinkASSIMP.cmake)
+
 # Handle the optional libraries
 if (${ENABLE_ASSIMP})
     include(${CMAKE_DIR}/LinkASSIMP.cmake)
