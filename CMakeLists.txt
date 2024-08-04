@@ -39,15 +39,22 @@ set(CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../includes)
 
 set(SOURCES 
-    ${SOURCE_DIR}/main.cpp
+    ${SOURCE_DIR}/Math_Utils.cpp
+    ${SOURCE_DIR}/Main.cpp
     ${SOURCE_DIR}/Player.cpp
+    ${SOURCE_DIR}/Shader.cpp
+    ${SOURCE_DIR}/Renderer.cpp
+    ${SOURCE_DIR}/Game.cpp
 
 )
 
 # Add all header files
 set(headers
-	${INCLUDE_DIR}/Player.h
-
+    ${INCLUDE_DIR}/Math_Utils.h
+    ${INCLUDE_DIR}/Player.h
+    ${INCLUDE_DIR}/Shader.h
+    ${INCLUDE_DIR}/Renderer.h
+    ${INCLUDE_DIR}/Game.h
 )
 
 add_executable(opengl-template ${SOURCES})
