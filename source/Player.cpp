@@ -25,8 +25,6 @@ void Player::move(bool forward) {
 
     //std::cout << "Player Movement delta: x = " << velocity.x << ", y = " << velocity.y << std::endl;
 
-    //position.x += velocity.x;
-    //position.y += velocity.y;
 
     setPosition(position.x + velocity.x, position.y + velocity.y);
 
@@ -105,12 +103,13 @@ void Player::wallCollisionResponse(bool horizontal) {
     float normalVelocityComponent = glm::dot(velocity, wallNormal);
 
     //Inelastic Collision (loses some speed), reducing the normal component by a factor of e where, 0 <= e <= 1
-    float e = 0.8f; // Example restitution coefficient; adjust as needed, 
+    float e = 0.0001f; // Example restitution coefficient; adjust as needed, 
                     //the ratio of the relative velocity of separation after collision to the relative velocity of approach before collision.
                     //https://en.wikipedia.org/wiki/Coefficient_of_restitution
     
     glm::vec2 reflectedVelocity = velocity - 2* normalVelocityComponent * wallNormal;
 
+    reflectedVelocity *= e;
 
     //Update Position
     velocity = reflectedVelocity;
