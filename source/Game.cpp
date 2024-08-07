@@ -107,24 +107,24 @@ void Game::key_callback(GLFWwindow *window, int key, int scancode, int action, i
 // Processes input: Checks for key presses and updates player positions and rotations accordingly.
 void Game::processInput()
 {
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        player1.rotate(1);
-        // std::cout << "GLFW_KEY_UP pressed\n";
-    }
-    else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        player1.rotate(-1);
-        // std::cout << "GLFW_KEY_DOWN pressed\n";
-    }
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        player1.move(false);
+        player1.rotate(1);
         // std::cout << "GLFW_KEY_LEFT pressed\n";
     }
     else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
+        player1.rotate(-1);
+        // std::cout << "GLFW_KEY_RIGHT pressed\n";
+    }
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
         player1.move(true);
+        // std::cout << "GLFW_KEY_UP pressed\n";
+    }
+    else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        player1.move(false);
         // std::cout << "GLFW_KEY_RIGHT pressed\n";
     }
 
@@ -133,7 +133,7 @@ void Game::processInput()
         player1.breakCar();
     }
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    /*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
         player2.rotate(1);
         // std::cout << "GLFW_KEY_W pressed\n";
@@ -152,7 +152,7 @@ void Game::processInput()
     {
         player2.move(true);
         // std::cout << "GLFW_KEY_D pressed\n";
-    }
+    }*/
 }
 
 // Updates the game state, including collision detection between players.
