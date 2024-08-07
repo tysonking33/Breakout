@@ -17,10 +17,18 @@ class Renderer
 {
     public:
         Renderer();
-        void draw(Shader& shader, glm::vec2 position, float angle);
+        void drawPlayer(Shader& shader, glm::vec2 position, float angle);
+        void drawWall(Shader& shader);
+        void drawCopAI(Shader& shader, glm::vec2 position, float angle);
+
     private:
-        GLuint VAO, VBO;
-        void initRenderData();
+        GLuint playerVAO, playerVBO;
+        GLuint wallVAO, wallVBO;  // For walls
+        GLuint copVAO, copVBO;  // For walls
+
+        void initRenderPlayerData();
+        void initRenderWallData();
+        void initRenderCopAIData();
 };
 
 

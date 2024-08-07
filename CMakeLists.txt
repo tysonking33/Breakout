@@ -45,6 +45,7 @@ set(SOURCES
     ${SOURCE_DIR}/Shader.cpp
     ${SOURCE_DIR}/Renderer.cpp
     ${SOURCE_DIR}/Game.cpp
+    ${SOURCE_DIR}/CopAI.cpp
 
 )
 
@@ -55,6 +56,7 @@ set(headers
     ${INCLUDE_DIR}/Shader.h
     ${INCLUDE_DIR}/Renderer.h
     ${INCLUDE_DIR}/Game.h
+    ${INCLUDE_DIR}/CopAI.h
 )
 
 add_executable(opengl-template ${SOURCES})
