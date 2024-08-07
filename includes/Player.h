@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 class Player {
 public:
@@ -17,6 +18,7 @@ public:
     void calculateVelocity(float current_speed1);
     void checkWallResponse();
     void wallCollisionResponse(bool horizontal);
+    void wallCollisionResponse1(bool horizontal);
     void collideAndSlide(Player p2);
 
     // Collision Detection Methods

@@ -94,10 +94,50 @@ void Player::collideAndSlide(Player p2) {
 
 // Handles wall collision response based on the direction of the wall.
 void Player::wallCollisionResponse(bool horizontal) {
+    std::cout << "Collison detected\n";
+        double PI = 3.14159265358979323846;
+
     glm::vec2 horizontalWall(0.0f, 1.0f);
     glm::vec2 verticalWall(1.0f, 0.0f);
 
-    glm::vec2 wallNormal = verticalWall;
+    glm::vec2 wallNormal = horizontal ? horizontalWall : verticalWall;
+
+    // Get velocity vector
+    calculateVelocity(currentSpeed);
+
+    //2. Calculate the Normal Component of the Velocity
+    float normalVelocityComponent = glm::dot(velocity, wallNormal);
+
+    //Inelastic Collision (loses some speed), reducing the normal component by a factor of e where, 0 <= e <= 1
+    float e = 0.8f; // Example restitution coefficient; adjust as needed
+    glm::vec2 reflectedVelocity=velocity - 2* normalVelocityComponent * wallNormal;
+
+
+    //Update Position
+    velocity = reflectedVelocity;
+    velocity.x = -velocity.x;
+    velocity.y = -velocity.y;
+    
+
+
+    std::cout << "Old Velocity: (" << velocity.x << ", " << velocity.y << ")\n";
+    std::cout << "Wall Normal: (" << wallNormal.x << ", " << wallNormal.y << ")\n";
+    std::cout << "Reflected Velocity: (" << reflectedVelocity.x << ", " << reflectedVelocity.y << ")\n";
+
+
+    std::cout << "Old angle: " << angle << std::endl;
+    //update resulting angle
+    angle = atan2(velocity.y, velocity.x)* (180.0 / PI);
+    std::cout << "New angle: " << angle << std::endl;
+
+
+}
+
+void Player::wallCollisionResponse1(bool horizontal) {
+    glm::vec2 horizontalWall(0.0f, 1.0f);
+    glm::vec2 verticalWall(1.0f, 0.0f);
+
+    glm::vec2 wallNormal = horizontal ? horizontalWall : verticalWall;
 
     if (horizontal) {
         wallNormal = horizontalWall;
@@ -117,11 +157,12 @@ void Player::wallCollisionResponse(bool horizontal) {
 
     // Find new speed and angle
     float newSpeed = glm::length(newVelocity);
-    float newAngle = glm::atan(newVelocity.y, newVelocity.x);
+    float newAngle = atan2(newVelocity.y, newVelocity.x);
 
     currentSpeed = newSpeed;
     angle = newAngle;
 }
+
 
 // Checks and responds to wall collisions.
 void Player::checkWallResponse() {

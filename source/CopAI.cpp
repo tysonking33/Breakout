@@ -6,7 +6,7 @@ CopAI::CopAI() {
 
 // Moves the CopAI forward or backward based on the 'forward' parameter.
 void CopAI::moveCop(glm::vec2 p1_pos) {
-    std::cout << "AI: position (" << p1_pos.x << ", " << p1_pos.y << ")\n";
+    //std::cout << "AI: position (" << p1_pos.x << ", " << p1_pos.y << ")\n";
     findCopToPlayerAngle(p1_pos);
 
     float currentSpeed = getCurrentSpeed();
@@ -27,14 +27,14 @@ void CopAI::moveCop(glm::vec2 p1_pos) {
 
     setPosition(position.x, position.y);
 
-    std::cout << "AI: velocity (" << velocity.x << ", " << velocity.y << ")\n";
+    //std::cout << "AI: velocity (" << velocity.x << ", " << velocity.y << ")\n";
 
-    checkWallResponse();
+    //checkWallResponse();
 
-    if (isCollided(p1_pos))
-    {
+    //if (isCollided(p1_pos))
+    //{
         //std::cout << "Cop collided with Player\n";
-    }
+    //}
 }
 
 // Checks for collision between this player and another player (p2).
