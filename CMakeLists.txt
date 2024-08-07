@@ -46,6 +46,7 @@ set(SOURCES
     ${SOURCE_DIR}/Renderer.cpp
     ${SOURCE_DIR}/Game.cpp
     ${SOURCE_DIR}/CopAI.cpp
+    ${SOURCE_DIR}/Car.cpp
 
 )
 
@@ -57,6 +58,7 @@ set(headers
     ${INCLUDE_DIR}/Renderer.h
     ${INCLUDE_DIR}/Game.h
     ${INCLUDE_DIR}/CopAI.h
+    ${INCLUDE_DIR}/Car.h
 )
 
 add_executable(opengl-template ${SOURCES})

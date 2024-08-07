@@ -2,39 +2,22 @@
 
 // Constructor: Initializes player properties such as position, size, angle, mass, width, height, and speed.
 Player::Player() {
-    position = glm::vec2(0,0);
-    size = 0.01f;
-    angle = 0.0f;
-    mass = 50.0f;
-    width = 0.1f;
-    height = 0.2f;
-    maxSpeed = 0.005f;  //max speed forwards
-    currentSpeed = 0.0f;
-    deltaTime = 0.0f;
-}
 
-// Rotates the player by the given increment and ensures the angle stays within 0-360 degrees.
-void Player::rotate(float rotation_increment) {
-    angle += rotation_increment;
-    if ((angle > 360) || (angle < -360)) {
-        angle = 0;
-    }
-}
-
-// Placeholder for drawing the player, actual drawing is handled in the main loop.
-void Player::draw() {
-    // Player drawing is handled in the main loop
 }
 
 // Moves the player forward or backward based on the 'forward' parameter.
 void Player::move(bool forward) {
+    float currentSpeed = getCurrentSpeed();
+    float maxSpeed = getMaxSpeed();
+    glm::vec2 position = getPosition();
+    glm::vec2 velocity = getVelocity();
     if (forward) {
         if (currentSpeed < maxSpeed) {
-            currentSpeed += 0.0001f;
+            updateCurrentSpeed(currentSpeed + 0.0001f);
         }
     } else {
         if (currentSpeed > -maxSpeed*3/4) {
-            currentSpeed -= 0.0001f;
+            updateCurrentSpeed(currentSpeed - 0.0001f);
         }
     }
     calculateVelocity(currentSpeed);
@@ -42,13 +25,19 @@ void Player::move(bool forward) {
 
     //std::cout << "Player Movement delta: x = " << velocity.x << ", y = " << velocity.y << std::endl;
 
-    position.x += velocity.x;
-    position.y += velocity.y;
+    //position.x += velocity.x;
+    //position.y += velocity.y;
+
+    setPosition(position.x + velocity.x, position.y + velocity.y);
 
     checkWallResponse();
 }
 
 void Player::breakCar() {
+    float currentSpeed = getCurrentSpeed();
+    glm::vec2 position = getPosition();
+    glm::vec2 velocity = getVelocity();
+
     if (currentSpeed > 0.0005) {
         currentSpeed -= 0.0005f;
     } else if (currentSpeed < -0.0005) {
@@ -63,18 +52,19 @@ void Player::breakCar() {
     position.y += velocity.y;
 }
 
-// Calculates the player's velocity based on speed and angle.
-void Player::calculateVelocity(float current_speed1) {
-    new_dx = current_speed1 * cos(glm::radians(angle));
-    new_dy = current_speed1 * sin(glm::radians(angle));
-
-    velocity = glm::vec2(new_dx, new_dy);
-}
 
 // Checks for collision between this player and another player (p2).
 bool Player::isCollided(Player p2) {
-    bool collideX = position.x + height >= p2.position.x && p2.position.x + p2.height >= position.x;
-    bool collideY = position.y + width >= p2.position.y && p2.position.y + p2.width >= position.y;
+    glm::vec2 position = getPosition();
+    glm::vec2 velocity = getVelocity();
+    float collisionXLoc = getCollisionXLoc();
+    float collisionYLoc = getCollisionYLoc();
+    
+    float height = getHeight();
+    float width = getWidth();
+
+    bool collideX = position.x + height >= p2.getPosition().x && p2.getPosition().x + p2.getHeight() >= position.x;
+    bool collideY = position.y + width >= p2.getPosition().y && p2.getPosition().y + p2.getWidth() >= position.y;
 
     collisionXLoc = position.x + height;
     collisionYLoc = position.y + height;
@@ -94,6 +84,12 @@ void Player::collideAndSlide(Player p2) {
 
 // Handles wall collision response based on the direction of the wall.
 void Player::wallCollisionResponse(bool horizontal) {
+    float currentSpeed = getCurrentSpeed();
+    glm::vec2 velocity = getVelocity();
+    float angle = getAngle();
+
+
+
     std::cout << "Collison detected\n";
         double PI = 3.14159265358979323846;
 
@@ -109,14 +105,20 @@ void Player::wallCollisionResponse(bool horizontal) {
     float normalVelocityComponent = glm::dot(velocity, wallNormal);
 
     //Inelastic Collision (loses some speed), reducing the normal component by a factor of e where, 0 <= e <= 1
-    float e = 0.8f; // Example restitution coefficient; adjust as needed
-    glm::vec2 reflectedVelocity=velocity - 2* normalVelocityComponent * wallNormal;
+    float e = 0.8f; // Example restitution coefficient; adjust as needed, 
+                    //the ratio of the relative velocity of separation after collision to the relative velocity of approach before collision.
+                    //https://en.wikipedia.org/wiki/Coefficient_of_restitution
+    
+    glm::vec2 reflectedVelocity = velocity - 2* normalVelocityComponent * wallNormal;
 
 
     //Update Position
     velocity = reflectedVelocity;
     velocity.x = -velocity.x;
     velocity.y = -velocity.y;
+
+    setVelocity(velocity);
+    
     
 
 
@@ -129,139 +131,36 @@ void Player::wallCollisionResponse(bool horizontal) {
     //update resulting angle
     angle = atan2(velocity.y, velocity.x)* (180.0 / PI);
     std::cout << "New angle: " << angle << std::endl;
-
-
+    setAngle(angle);
 }
 
-void Player::wallCollisionResponse1(bool horizontal) {
-    glm::vec2 horizontalWall(0.0f, 1.0f);
-    glm::vec2 verticalWall(1.0f, 0.0f);
-
-    glm::vec2 wallNormal = horizontal ? horizontalWall : verticalWall;
-
-    if (horizontal) {
-        wallNormal = horizontalWall;
-    }
-    // Get velocity vector
-    calculateVelocity(currentSpeed);
-
-    // Find normal and tangent components
-    glm::vec2 velocityNormal = glm::dot(velocity, wallNormal) * wallNormal;
-    glm::vec2 velocityTangent = velocity - velocityNormal;
-
-    // Reflect normal component
-    glm::vec2 reflectedVNorm = -velocityNormal;
-
-    // Combine the components
-    glm::vec2 newVelocity = reflectedVNorm + velocityTangent;
-
-    // Find new speed and angle
-    float newSpeed = glm::length(newVelocity);
-    float newAngle = atan2(newVelocity.y, newVelocity.x);
-
-    currentSpeed = newSpeed;
-    angle = newAngle;
-}
 
 
 // Checks and responds to wall collisions.
 void Player::checkWallResponse() {
+    glm::vec2 position = getPosition();
+    float newX = position.x;
+    float newY = position.y;
     if (position.x < -1) {
         position.x = -1;
         wallCollisionResponse(true);
+        newX = -1;
     } else if (position.x > 1) {
         position.x = 1;
         wallCollisionResponse(true);
+        newX = 1;
     }
 
     if (position.y < -1) {
         position.y = -1;
         wallCollisionResponse(false);
+        newY = -1;
     } else if (position.y > 1) {
         position.y = 1;
         wallCollisionResponse(false);
+        newY = 1;
     }
+    setPosition(newX, newY);
 }
 
-// Getters and Setters
 
-// Returns the current angle of the player.
-float Player::getAngle() {
-    return angle;
-}
-
-// Sets the player's angle.
-void Player::setAngle(float newAngle) {
-    angle = newAngle;
-}
-
-// Returns the current position of the player.
-glm::vec2 Player::getPosition() const {
-    return position;
-}
-
-// Sets the player's position to the specified coordinates.
-void Player::setPosition(float dx, float dy) {
-    position.x = dx;
-    position.y = dy;
-}
-
-// Returns the current velocity of the player.
-glm::vec2 Player::getVelocity() {
-    return velocity;
-}
-
-// Returns the mass of the player.
-float Player::getMass() {
-    return mass;
-}
-
-// Updates the current speed of the player.
-void Player::updateCurrentSpeed(float newSpeed) {
-    currentSpeed = newSpeed;
-}
-
-// Returns the current speed of the player.
-float Player::getCurrentSpeed() {
-    return currentSpeed;
-}
-
-// Returns the maximum speed of the player.
-float Player::getMaxSpeed() {
-    return maxSpeed;
-}
-
-// Returns the height of the player.
-float Player::getHeight() {
-    return height;
-}
-
-// Returns the collision X location of the player.
-float Player::getCollisionXLoc() {
-    return collisionXLoc;
-}
-
-// Sets the collision X location of the player.
-void Player::setCollisionXLoc(float newCollisionX) {
-    collisionXLoc = newCollisionX;
-}
-
-// Returns the collision Y location of the player.
-float Player::getCollisionYLoc() {
-    return collisionYLoc;
-}
-
-// Sets the collision Y location of the player.
-void Player::setCollisionYLoc(float newCollisionY) {
-    collisionYLoc = newCollisionY;
-}
-
-// Returns the width of the player.
-float Player::getWidth() {
-    return width;
-}
-
-// Sets the delta time for the player.
-void Player::setDeltaTime(float newDeltaTime) {
-    deltaTime = newDeltaTime;
-}

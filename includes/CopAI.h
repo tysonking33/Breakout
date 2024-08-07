@@ -6,9 +6,13 @@
 #include <algorithm>
 #include <cmath>
 
+#include "Car.h"
 #include "Player.h"
 
-class CopAI : public Player {
+class Player;
+
+
+class CopAI : public Car {
 
 public:
     CopAI();
